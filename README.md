@@ -7,7 +7,7 @@ against an existing dictionary Words_Tech_Test.txt
 
 This project is built with Maven.  
 maven clean install  
---  
+
 Programming done using Java 8 and SpringBoot 1.5.10  
 More information available in file Anagram_README.docx  
 
