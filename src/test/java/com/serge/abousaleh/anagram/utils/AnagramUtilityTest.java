@@ -1,7 +1,6 @@
 package com.serge.abousaleh.anagram.utils;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 

@@ -1,5 +1,7 @@
 package com.serge.abousaleh.anagram.utils;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -95,5 +97,18 @@ public final class AnagramUtility {
 		}
 		logger.debug("convertStringToMap - End");
 		return mapChars;
+	}
+	
+	public static void writeSetToFile (Set<String> dictionary, String fileName) {
+		logger.debug("writeSetToFile - Start");
+		String fileContent = dictionary.stream()
+				.collect(Collectors.joining("\n"));
+		
+		try( FileWriter fw = new FileWriter(new File(fileName)) ) {
+			fw.write(fileContent);
+		} catch (IOException e) {
+			logger.error("Error writing into file " + fileName, e);
+		}
+		logger.debug("writeSetToFile - End");
 	}
 }
