@@ -1,16 +1,16 @@
 package com.serge.abousaleh.anagram.domain;
 
-import java.util.List;
+import java.util.Set;
 
 public class AnagramResult {
 
-	List<String> anagrams;
+	Set<String> anagrams;
 
-	public List<String> getAnagrams() {
+	public Set<String> getAnagrams() {
 		return anagrams;
 	}
 
-	public void setAnagrams(List<String> anagrams) {
+	public void setAnagrams(Set<String> anagrams) {
 		this.anagrams = anagrams;
 	}
 	

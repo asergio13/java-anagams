@@ -3,6 +3,7 @@ package com.serge.abousaleh.anagram.utils;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
@@ -15,36 +16,20 @@ public class AnagramUtilityTest {
 	public void setup() {
 	}
 	
-//	@Test
-//	public void shouldGetDictionaryContent_givenSmallDictionary() {
-//		
-//		String fileName = "/src/test/resources/dictionaryRandom.txt";
-//		String dictionaryFilePath = new File("").getAbsolutePath();
-//		dictionaryFilePath = dictionaryFilePath.concat(fileName);
-//		
-//		// action
-//		List<String> listAllWords = AnagramUtility.getDictionaryContent(dictionaryFilePath);
-//		
-//		// assert
-//		Assertions.assertThat(listAllWords).isNotNull();
-//		Assertions.assertThat(listAllWords).isNotEmpty();
-//	}
-	
-//	@Test
-//	public void shouldGetDictionaryContent_givenBigDictionary() {
-//		
-//		String fileName = "/src/test/resources/Words_Tech_Test.txt";
-//		String dictionaryFilePath = new File("").getAbsolutePath();
-//		dictionaryFilePath = dictionaryFilePath.concat(fileName);
-//		
-//		// action
-//		List<String> listAllWords = AnagramUtility.getDictionaryContent(dictionaryFilePath);
-//		
-//		// assert
-//		Assertions.assertThat(listAllWords).isNotNull();
-//		Assertions.assertThat(listAllWords).isNotEmpty();
-//	}
-	
+	@Test
+	public void shouldGetDictionaryContent_givenExistingDictionary() {
+		
+		String fileName = "/src/test/resources/dictionaryRandom.txt";
+		String dictionaryFilePath = new File("").getAbsolutePath();
+		dictionaryFilePath = dictionaryFilePath.concat(fileName);
+		
+		// action
+		Set<String> dictionaryContent = AnagramUtility.getDictionaryContent(dictionaryFilePath);
+		
+		// assert
+		Assertions.assertThat(dictionaryContent).isNotNull();
+		Assertions.assertThat(dictionaryContent).isNotEmpty();
+	}
 	
 	@Test
 	public void shouldCheckAnagrams_givenTwoWords() {
@@ -80,9 +65,10 @@ public class AnagramUtilityTest {
 		String word3 = "lp!";
 		
 		// action
-		List<String> list1 = AnagramUtility.getAnagramsFromDictionary(word1, dictionaryFilePath);
-		List<String> list2 = AnagramUtility.getAnagramsFromDictionary(word2, dictionaryFilePath);
-		List<String> list3 = AnagramUtility.getAnagramsFromDictionary(word3, dictionaryFilePath);
+		Set<String> dictionary = AnagramUtility.getDictionaryContent(dictionaryFilePath);
+		Set<String> list1 = AnagramUtility.getListAnagrams(word1, dictionary);
+		Set<String> list2 = AnagramUtility.getListAnagrams(word2, dictionary);
+		Set<String> list3 = AnagramUtility.getListAnagrams(word3, dictionary);
 		
 		// assert
 		Assertions.assertThat(list1).contains("cbeda");
@@ -104,11 +90,12 @@ public class AnagramUtilityTest {
 		String word5 = "1";
 		
 		// action
-		List<String> list1 = AnagramUtility.getAnagramsFromDictionary(word1, dictionaryFilePath);
-		List<String> list2 = AnagramUtility.getAnagramsFromDictionary(word2, dictionaryFilePath);
-		List<String> list3 = AnagramUtility.getAnagramsFromDictionary(word3, dictionaryFilePath);
-		List<String> list4 = AnagramUtility.getAnagramsFromDictionary(word4, dictionaryFilePath);
-		List<String> list5 = AnagramUtility.getAnagramsFromDictionary(word5, dictionaryFilePath);
+		Set<String> dictionary = AnagramUtility.getDictionaryContent(dictionaryFilePath);
+		Set<String> list1 = AnagramUtility.getListAnagrams(word1, dictionary);
+		Set<String> list2 = AnagramUtility.getListAnagrams(word2, dictionary);
+		Set<String> list3 = AnagramUtility.getListAnagrams(word3, dictionary);
+		Set<String> list4 = AnagramUtility.getListAnagrams(word4, dictionary);
+		Set<String> list5 = AnagramUtility.getListAnagrams(word5, dictionary);
 		
 		// assert
 		Assertions.assertThat(list1).isNull();
@@ -120,7 +107,6 @@ public class AnagramUtilityTest {
 	
 	@Test
 	public void shouldConvertStringToMap_givenValidWords() {
-		
 		
 		String word1 = "";
 		String word2 = "abc";

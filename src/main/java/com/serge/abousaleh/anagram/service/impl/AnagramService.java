@@ -9,9 +9,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.serge.abousaleh.anagram.domain.AnagramResult;
@@ -21,18 +22,22 @@ import com.serge.abousaleh.anagram.utils.AnagramUtility;
 @Service
 public class AnagramService implements IAnagramService {
 
+	Logger logger = LoggerFactory.getLogger(AnagramService.class);
+	
 	@Override
 	public AnagramResult getAnagrams(String word, String fileName) {
 		
 		// Get Dictionary
 		AnagramResult anagramResult = new AnagramResult();
-		anagramResult.setAnagrams(AnagramUtility.getAnagramsFromDictionary(word, fileName));
+		Set<String> dictionary = AnagramUtility.getDictionaryContent(fileName);
+		anagramResult.setAnagrams(AnagramUtility.getListAnagrams(word, dictionary));
 		
 		return anagramResult;
 	}
 
 	@Override
 	public boolean insertWordInDictionary(String word, String fileName) {
+		logger.debug("insertWordInDictionary - Start");
 		boolean result = false;
 		try {
 			boolean wordExists = checkWordExistsInDictionary(word, fileName);
@@ -41,19 +46,21 @@ public class AnagramService implements IAnagramService {
 			if(!wordExists) {
 				word = new StringBuilder(word).append("\r\n").toString();
 				Files.write(
-				      Paths.get(fileName), 
-				      word.getBytes(), 
-				      StandardOpenOption.APPEND);
+						Paths.get(fileName), 
+						word.getBytes(), 
+						StandardOpenOption.APPEND);
 				result = true;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error when inserting a word in dictionary", e);
 		}
+		logger.debug("insertWordInDictionary - End");
 		return result;
 	}
 
 	@Override
 	public boolean deleteWordFromDictionary(String word, String fileName) {
+		logger.debug("deleteWordFromDictionary - Start");
 		boolean result = false;
 		try {
 			boolean wordExists = checkWordExistsInDictionary(word, fileName);
@@ -83,23 +90,23 @@ public class AnagramService implements IAnagramService {
 				result = true;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error when deleting a word in dictionary", e);
 		}
+		logger.debug("deleteWordFromDictionary - End");
 		return result;
 	}
 	
 	@Override
 	public boolean checkWordExistsInDictionary(String word, String fileName) {
+		logger.debug("checkWordExistsInDictionary - Start");
 		boolean wordExists = false;
 		if (word.length() > 1 && word.length() < Integer.MAX_VALUE) {
-			try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
-				
-				wordExists = stream.anyMatch(line -> line.equals(word));
-	
-			} catch (IOException e) {
-				e.printStackTrace();
+			Set<String> dictionary = AnagramUtility.getDictionaryContent(fileName);
+			if (dictionary.contains(word)) {
+				wordExists = true;
 			}
 		}
+		logger.debug("checkWordExistsInDictionary - End");
 		return wordExists;
 	}
 

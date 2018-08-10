@@ -3,105 +3,63 @@ package com.serge.abousaleh.anagram.utils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
+
+
 public final class AnagramUtility {
 	
-	public static List<String> getDictionaryContent(String fileName) {
-		
-		List<String> listFullWords = null;
+	private AnagramUtility() {}
+	
+	static final Logger logger = LoggerFactory.getLogger(AnagramUtility.class);
+	
+	public static Set<String> getDictionaryContent(String fileName) {
+		logger.debug("getDictionaryContent - Start");
+		Set<String> dictionaryContent = null;
 
 		// read file into stream, try-with-resources
 		try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
 
-			stream.forEach(System.out::println);
 			// convert Stream to collection
-			listFullWords = stream.collect(Collectors.toList());
-
+			dictionaryContent = stream.collect(Collectors.toSet());
+			if (!CollectionUtils.isEmpty(dictionaryContent) && dictionaryContent.size() < 200) {
+				logger.debug(dictionaryContent.toString());
+			}
+			
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error getting the dictionary content", e);
 		}
-		return listFullWords;
+		logger.debug("getDictionaryContent - End");
+		return dictionaryContent;
 	}
 	
 	
-	public static List<String> getAnagramsFromDictionary(String word, String fileName) {
-		
-		List<String>  listAnagrams = null;
+	public static Set<String> getListAnagrams(String word, Set<String> dictionary) {
+		logger.debug("getListAnagrams - Start");
+		Set<String> listAnagrams  = null;
 		if (word.length() > 1 && word.length() < Integer.MAX_VALUE) {
-		
-			try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
-	
-				listAnagrams = stream
-						.filter(lineDictionary -> AnagramUtility.checkAnagrams(lineDictionary, word))
-						.collect(Collectors.toList());
-	
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			listAnagrams = dictionary
+			.stream()
+			.filter(lineDictionary -> AnagramUtility.checkAnagrams(lineDictionary, word))
+			.collect(Collectors.toSet());
 		}
+		logger.debug("getListAnagrams - End");
 		return listAnagrams;
 	}
-
 	
 	public static boolean isAlpha(String name) {
 		return name.matches("[a-zA-Z]+");
 	}
 	
-//	static boolean checkAnagram(String word1, String word2) {
-//
-//		boolean areAnagram = true;
-//		
-////		if (isAlpha(word1) && isAlpha(word1)) {
-//			// put everything to lower case
-////			char a[] = word1.toLowerCase().toCharArray();
-////			char b[] = word2.toLowerCase().toCharArray();
-//			char a[] = word1.toCharArray();
-//			char b[] = word2.toCharArray();
-//			
-//			//Declare 2 arrays of size 26 (26 letters)
-//			int first[] = new int[100];
-//			int second[] = new int[100];
-//			int frequency = 0;
-//			
-//		
-//			// Calculating frequency of characters of first string
-//			for(int i = 0; i < a.length; i++) {
-//				first[a[frequency]-'a']++;
-//				frequency++;
-//			}
-//		 
-//			//reinit frequency
-//			frequency = 0;
-//			
-//			for(int i = 0; i < b.length; i++) {
-//				second[b[frequency]-'a']++;
-//				frequency++;
-//			}
-//		
-//			// Comparing frequency of characters
-//			for (frequency = 0; frequency < 100; frequency++) {
-//				if (first[frequency] != second[frequency]) {
-//					areAnagram = false;
-//					break;
-//				}
-//			}
-////		} else {
-////			areAnagram = false;
-////		}
-//		return areAnagram;
-//	}
-	
-	
 	static boolean checkAnagrams(String word1, String word2) {
+		logger.debug("checkAnagrams - Start");
 		boolean result = false;
 
 		Map<Character, Integer> mapChars1 = AnagramUtility.convertStringToMap(word1);
@@ -111,10 +69,12 @@ public final class AnagramUtility {
 				&& mapChars1.equals(mapChars2)) {
 			result = true;
 		}
+		logger.debug("checkAnagrams - End");
 		return result;
 	}
 	
 	public static Map<Character, Integer> convertStringToMap(String word) {
+		logger.debug("convertStringToMap - Start");
 		Map<Character, Integer> mapChars = null;
 		if(word != null && word.length() > 1) {
 			mapChars = new HashMap<>();
@@ -133,6 +93,7 @@ public final class AnagramUtility {
 				}
 			}
 		}
+		logger.debug("convertStringToMap - End");
 		return mapChars;
 	}
 }
