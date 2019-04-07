@@ -37,6 +37,7 @@ public class AnagramService implements IAnagramService {
 			dictionary.add(word);
 			// Append to dictionary File
 			AnagramUtility.writeSetToFile(dictionary, fileName);
+			result = true;
 		}
 
 		logger.debug("insertWordInDictionary - End");
